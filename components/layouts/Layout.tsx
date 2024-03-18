@@ -10,6 +10,7 @@ import { $searchModal } from '@/context/modals'
 import { useUnit } from 'effector-react'
 import { handleCloseSearchModal } from '@/lib/utils/common'
 import clsx from 'clsx'
+import Footer from '../modules/Footer/Footer'
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const isMedia800 = useMediaQuery(800)
@@ -43,7 +44,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         onClick={handleCloseSearchModal}
       />
 
-      <div>Footer</div>
+      <Footer />
     </>
   )
 }
