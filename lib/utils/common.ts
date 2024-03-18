@@ -1,3 +1,5 @@
+import { closeSearchModal } from '@/context/modals'
+
 export const removeOverflowHiddenBody = () => {
   const body = document.body as HTMLBodyElement
   body.classList.remove('overflow-hidden')
@@ -15,4 +17,9 @@ export const getWindowWidth = () => {
     typeof window !== 'undefined' ? window : { innerWidth: 0 }
 
   return { windowWidth }
+}
+
+export const handleCloseSearchModal = () => {
+  closeSearchModal()
+  removeOverflowHiddenBody()
 }
