@@ -23,3 +23,23 @@ export const handleCloseSearchModal = () => {
   closeSearchModal()
   removeOverflowHiddenBody()
 }
+
+export const shuffle = <T>(array: T[]) => {
+  let currentIdx = array.length
+
+  let randomIdx
+
+  while (currentIdx != 0) {
+    randomIdx = Math.floor(Math.random() * currentIdx)
+    currentIdx--
+    ;[array[currentIdx], array[randomIdx]] = [
+      array[randomIdx],
+      array[currentIdx],
+    ]
+  }
+
+  return array
+}
+
+export const formatPrice = (x: number) =>
+  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
