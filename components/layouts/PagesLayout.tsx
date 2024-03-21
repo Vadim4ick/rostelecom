@@ -3,16 +3,30 @@
 import { ReactNode } from 'react'
 import { Layout } from './Layout'
 import { useUnit } from 'effector-react'
-import { $showQuickViewModal, closeQuickViewModal } from '@/context/modals'
+import {
+  $showQuickViewModal,
+  $showSizeTable,
+  closeQuickViewModal,
+} from '@/context/modals'
 import clsx from 'clsx'
-import { removeOverflowHiddenBody } from '@/lib/utils/common'
+import {
+  closeSizeTableByCheck,
+  removeOverflowHiddenBody,
+} from '@/lib/utils/common'
 
 const PagesLayout = ({ children }: { children: ReactNode }) => {
-  const showQuickViewModal = useUnit($showQuickViewModal)
+  const [showQuickViewModal, showSizeTable] = useUnit([
+    $showQuickViewModal,
+    $showSizeTable,
+  ])
 
   const handleCloseQuickViewModal = () => {
     removeOverflowHiddenBody()
     closeQuickViewModal()
+  }
+
+  const handleCloseSizeTable = () => {
+    closeSizeTableByCheck(showQuickViewModal)
   }
 
   return (
@@ -25,6 +39,13 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
             'overlay-active': showQuickViewModal,
           })}
           onClick={handleCloseQuickViewModal}
+        />
+
+        <div
+          className={clsx('size-table-overlay', {
+            'overlay-active': showSizeTable,
+          })}
+          onClick={handleCloseSizeTable}
         />
       </body>
     </html>
