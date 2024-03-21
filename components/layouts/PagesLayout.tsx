@@ -11,13 +11,17 @@ import {
 import clsx from 'clsx'
 import {
   closeSizeTableByCheck,
+  handleCloseAuthPopup,
   removeOverflowHiddenBody,
 } from '@/lib/utils/common'
+import { $openAuthPopup } from '@/context/auth'
+import { Toaster } from 'react-hot-toast'
 
 const PagesLayout = ({ children }: { children: ReactNode }) => {
-  const [showQuickViewModal, showSizeTable] = useUnit([
+  const [showQuickViewModal, showSizeTable, openAuthPopup] = useUnit([
     $showQuickViewModal,
     $showSizeTable,
+    $openAuthPopup,
   ])
 
   const handleCloseQuickViewModal = () => {
@@ -47,6 +51,15 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
           })}
           onClick={handleCloseSizeTable}
         />
+
+        <div
+          className={clsx('auth-overlay', {
+            'overlay-active': openAuthPopup,
+          })}
+          onClick={handleCloseAuthPopup}
+        />
+
+        <Toaster position='top-center' reverseOrder={false} />
       </body>
     </html>
   )

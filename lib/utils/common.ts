@@ -1,3 +1,4 @@
+import { closeAuthPopup, openAuthPopup } from '@/context/auth'
 import { closeSearchModal, closeSizeTable } from '@/context/modals'
 import { ICartItem } from '@/types/cart'
 
@@ -77,4 +78,25 @@ export const closeSizeTableByCheck = (showQuickViewModal: boolean) => {
   }
 
   closeSizeTable()
+}
+
+export const handleCloseAuthPopup = () => {
+  removeOverflowHiddenBody()
+  closeAuthPopup()
+}
+
+export const closeAuthPopupWhenSomeModalOpened = (
+  showQuickViewModal: boolean,
+  showSizeTable: boolean
+) => {
+  if (showQuickViewModal || showSizeTable) {
+    return closeAuthPopup()
+  }
+
+  handleCloseAuthPopup()
+}
+
+export const handleOpenAuthPopup = () => {
+  addOverflowHiddenBody()
+  openAuthPopup()
 }
