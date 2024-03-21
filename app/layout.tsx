@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Layout } from '@/components/layouts/Layout'
 
 import './globalStyles/normalize.css'
 import './globalStyles/globals.css'
@@ -16,6 +15,7 @@ import './globalStyles/auth-popup.css'
 import './globalStyles/header-profile.css'
 import './globalStyles/cookie-popup.css'
 import './globalStyles/breadcrumbs.css'
+import { PagesLayout } from '@/components/layouts/PagesLayout'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -27,11 +27,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return (
-    <html lang='en'>
-      <body>
-        <Layout>{children} </Layout>
-      </body>
-    </html>
-  )
+  return <PagesLayout>{children}</PagesLayout>
 }
