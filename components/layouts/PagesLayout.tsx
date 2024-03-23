@@ -16,6 +16,7 @@ import {
 } from '@/lib/utils/common'
 import { $openAuthPopup } from '@/context/auth'
 import { Toaster } from 'react-hot-toast'
+import { EarthoOneProvider } from '@eartho/one-client-react'
 
 const PagesLayout = ({ children }: { children: ReactNode }) => {
   const [showQuickViewModal, showSizeTable, openAuthPopup] = useUnit([
@@ -34,34 +35,38 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
   }
 
   return (
-    <html lang='en'>
-      <body>
-        <Layout>{children} </Layout>
+    <>
+      <EarthoOneProvider clientId={String(process.env.EARTHO_CLIENT_ID)}>
+        <html lang='en'>
+          <body>
+            <Layout>{children} </Layout>
 
-        <div
-          className={clsx('quick-view-modal-overlay', {
-            'overlay-active': showQuickViewModal,
-          })}
-          onClick={handleCloseQuickViewModal}
-        />
+            <div
+              className={clsx('quick-view-modal-overlay', {
+                'overlay-active': showQuickViewModal,
+              })}
+              onClick={handleCloseQuickViewModal}
+            />
 
-        <div
-          className={clsx('size-table-overlay', {
-            'overlay-active': showSizeTable,
-          })}
-          onClick={handleCloseSizeTable}
-        />
+            <div
+              className={clsx('size-table-overlay', {
+                'overlay-active': showSizeTable,
+              })}
+              onClick={handleCloseSizeTable}
+            />
 
-        <div
-          className={clsx('auth-overlay', {
-            'overlay-active': openAuthPopup,
-          })}
-          onClick={handleCloseAuthPopup}
-        />
+            <div
+              className={clsx('auth-overlay', {
+                'overlay-active': openAuthPopup,
+              })}
+              onClick={handleCloseAuthPopup}
+            />
 
-        <Toaster position='top-center' reverseOrder={false} />
-      </body>
-    </html>
+            <Toaster position='top-center' reverseOrder={false} />
+          </body>
+        </html>
+      </EarthoOneProvider>
+    </>
   )
 }
 
