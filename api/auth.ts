@@ -1,3 +1,5 @@
+'use client'
+
 import { ISignUpFx } from './../types/authPopup'
 import { createEffect } from 'effector'
 import { $api } from './api'

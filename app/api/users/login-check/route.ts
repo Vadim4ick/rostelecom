@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import clientPromise from '@/lib/mongodb'
 import {
   findUserByEmail,
   getAuthRouteData,
   parseJwt,
 } from '@/lib/utils/api-routes'
+import { IUser } from '@/types/user'
 import { NextResponse } from 'next/server'
 
 export async function GET(req: Request) {
@@ -18,7 +20,10 @@ export async function GET(req: Request) {
       return NextResponse.json(validatedTokenResult)
     }
 
-    const user = await findUserByEmail(db, parseJwt(token as string).email)
+    const { password, ...user } = (await findUserByEmail(
+      db,
+      parseJwt(token as string).email
+    )) as unknown as IUser
 
     return NextResponse.json({
       status: 200,
@@ -29,3 +34,5 @@ export async function GET(req: Request) {
     throw new Error((error as Error).message)
   }
 }
+
+export const dynamic = 'force-dynamic'

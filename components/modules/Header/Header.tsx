@@ -19,6 +19,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { loginCheckFx } from '@/api/auth'
 import { useEffect } from 'react'
 import { $user } from '@/context/user'
+import { useCartByAuth } from '@/hooks/useCartByAuth'
 
 const Header = () => {
   const { lang, translations } = useLang()
@@ -28,7 +29,9 @@ const Header = () => {
     $user,
   ])
 
-  console.log(user)
+  const currentCartByAuth = useCartByAuth()
+
+  console.log(currentCartByAuth)
 
   const handleOpenMenu = () => {
     openMenu()
@@ -42,13 +45,6 @@ const Header = () => {
 
   useEffect(() => {
     triggerLoginCheck()
-    // const auth = JSON.parse(localStorage.getItem('auth') as string)
-
-    // if (auth?.accessToken) {
-    //   setIsAuth2(false)
-    // }
-
-    // loginCheck({ jwt: auth.accessToken })
   }, [])
 
   return (

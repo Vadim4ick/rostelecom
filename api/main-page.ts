@@ -1,3 +1,5 @@
+'use client'
+
 import { createEffect } from 'effector'
 import { $api } from './api'
 
