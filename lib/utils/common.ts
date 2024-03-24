@@ -1,5 +1,6 @@
-import { closeAuthPopup, openAuthPopup } from '@/context/auth'
+import { closeAuthPopup, openAuthPopup, setIsAuth } from '@/context/auth'
 import { closeSearchModal, closeSizeTable } from '@/context/modals'
+import { loginCheck } from '@/context/user'
 import { ICartItem } from '@/types/cart'
 
 export const removeOverflowHiddenBody = () => {
@@ -99,4 +100,26 @@ export const closeAuthPopupWhenSomeModalOpened = (
 export const handleOpenAuthPopup = () => {
   addOverflowHiddenBody()
   openAuthPopup()
+}
+
+export const isUserAuth = () => {
+  const auth = JSON.parse(localStorage.getItem('auth') as string)
+
+  if (!auth?.accessToken) {
+    setIsAuth(false)
+    return false
+  }
+
+  return true
+}
+
+export const triggerLoginCheck = () => {
+  const res = isUserAuth()
+  if (!res) {
+    return
+  }
+
+  const auth = JSON.parse(localStorage.getItem('auth') as string)
+
+  loginCheck({ jwt: auth?.accessToken })
 }

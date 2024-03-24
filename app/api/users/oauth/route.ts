@@ -12,8 +12,6 @@ export async function POST(req: Request) {
 
   const user = await findUserByEmail(db, reqBody.email)
 
-  console.log('oauth', user)
-
   if (!user) {
     const tokens = await createUserAndGenerateTokens(db, reqBody)
 

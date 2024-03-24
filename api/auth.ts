@@ -3,10 +3,11 @@ import { createEffect } from 'effector'
 import { $api } from './api'
 import toast from 'react-hot-toast'
 import { onAuthSuccess } from '@/lib/utils/auth'
+import { setIsAuth } from '@/context/auth'
+import { handleJWTError } from '@/lib/utils/errors'
 
 export const oAuthFx = createEffect(
   async ({ email, password, name }: ISignUpFx) => {
-    console.log('TEST', email)
     try {
       const { data } = await $api.post('/api/users/oauth', {
         name,
@@ -19,7 +20,7 @@ export const oAuthFx = createEffect(
         email,
       })
 
-      onAuthSuccess('Регистрация выполнена!', data)
+      onAuthSuccess('Авторизация выполнена!', data)
 
       return data.user
     } catch (error) {
@@ -30,7 +31,7 @@ export const oAuthFx = createEffect(
 
 export const singUpFx = createEffect(
   async ({ email, password, name, isOAuth }: ISignUpFx) => {
-    if (!isOAuth) {
+    if (isOAuth) {
       return await oAuthFx({
         email,
         password,
@@ -56,7 +57,7 @@ export const singUpFx = createEffect(
 
 export const singInFx = createEffect(
   async ({ email, password, isOAuth }: ISignUpFx) => {
-    if (!isOAuth) {
+    if (isOAuth) {
       return await oAuthFx({
         email,
         password,
@@ -74,3 +75,33 @@ export const singInFx = createEffect(
     return data
   }
 )
+
+export const loginCheckFx = createEffect(async ({ jwt }: { jwt: string }) => {
+  try {
+    const { data } = await $api.get('/api/users/login-check', {
+      headers: { Authorization: `Bearer ${jwt}` },
+    })
+
+    if (data?.error) {
+      handleJWTError(data.error.name, {
+        repeatRequestMethodName: 'loginCheckFx',
+      })
+      return
+    }
+
+    setIsAuth(true)
+    return data.user
+  } catch (error) {
+    toast.error((error as Error).message)
+  }
+})
+
+export const refreshTokenFx = createEffect(async ({ jwt }: { jwt: string }) => {
+  const { data } = await $api.post('/api/users/refresh', {
+    jwt,
+  })
+
+  localStorage.setItem('auth', JSON.stringify(data))
+
+  return data
+})

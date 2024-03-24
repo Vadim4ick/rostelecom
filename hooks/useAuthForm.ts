@@ -34,7 +34,7 @@ export const useAuthForm = (
 
   const handleSignupWithOAuth = () =>
     connectWithPopup({
-      access_id: `${process.env.EARTHO_OAUTH_ACCESS_ID}`,
+      access_id: String(process.env.NEXT_PUBLIC_EARTHO_OAUTH_ACCESS_ID),
     })
 
   return {

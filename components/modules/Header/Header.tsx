@@ -5,11 +5,30 @@ import { useLang } from '@/hooks/useLang'
 import Link from 'next/link'
 import { Menu } from './Menu'
 import { openMenu, openSearchModal } from '@/context/modals'
-import { addOverflowHiddenBody, handleOpenAuthPopup } from '@/lib/utils/common'
+import {
+  addOverflowHiddenBody,
+  handleOpenAuthPopup,
+  triggerLoginCheck,
+} from '@/lib/utils/common'
 import CartPopup from './CartPopup/CartPopup'
+import HeaderProfule from './HeaderProfule'
+import { useUnit } from 'effector-react'
+import { $isAuth } from '@/context/auth'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { loginCheckFx } from '@/api/auth'
+import { useEffect } from 'react'
+import { $user } from '@/context/user'
 
 const Header = () => {
   const { lang, translations } = useLang()
+  const [auth, loginCheckSpinner, user] = useUnit([
+    $isAuth,
+    loginCheckFx.pending,
+    $user,
+  ])
+
+  console.log(user)
 
   const handleOpenMenu = () => {
     openMenu()
@@ -20,6 +39,17 @@ const Header = () => {
     openSearchModal()
     addOverflowHiddenBody()
   }
+
+  useEffect(() => {
+    triggerLoginCheck()
+    // const auth = JSON.parse(localStorage.getItem('auth') as string)
+
+    // if (auth?.accessToken) {
+    //   setIsAuth2(false)
+    // }
+
+    // loginCheck({ jwt: auth.accessToken })
+  }, [])
 
   return (
     <header className='header'>
@@ -61,10 +91,16 @@ const Header = () => {
           </li>
 
           <li className='header__links__item header__links__item--profile'>
-            <button
-              className='btn-reset header__links__item__btn header__links__item__btn--profile'
-              onClick={handleOpenAuthPopup}
-            />
+            {auth ? (
+              <HeaderProfule />
+            ) : loginCheckSpinner ? (
+              <FontAwesomeIcon icon={faSpinner} spin />
+            ) : (
+              <button
+                className='btn-reset header__links__item__btn header__links__item__btn--profile'
+                onClick={handleOpenAuthPopup}
+              />
+            )}
           </li>
         </ul>
       </div>

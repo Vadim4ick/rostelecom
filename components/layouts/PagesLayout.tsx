@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Layout } from './Layout'
 import { useUnit } from 'effector-react'
 import {
@@ -19,6 +19,8 @@ import { Toaster } from 'react-hot-toast'
 import { EarthoOneProvider } from '@eartho/one-client-react'
 
 const PagesLayout = ({ children }: { children: ReactNode }) => {
+  const [client, setClient] = useState(false)
+
   const [showQuickViewModal, showSizeTable, openAuthPopup] = useUnit([
     $showQuickViewModal,
     $showSizeTable,
@@ -34,38 +36,50 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
     closeSizeTableByCheck(showQuickViewModal)
   }
 
+  useEffect(() => setClient(true), [])
+
   return (
     <>
-      <EarthoOneProvider clientId={String(process.env.EARTHO_CLIENT_ID)}>
+      {client ? (
+        <EarthoOneProvider
+          clientId={String(process.env.NEXT_PUBLIC_EARTHO_CLIENT_ID)}
+        >
+          <html lang='en'>
+            <body>
+              <Layout>{children} </Layout>
+
+              <div
+                className={clsx('quick-view-modal-overlay', {
+                  'overlay-active': showQuickViewModal,
+                })}
+                onClick={handleCloseQuickViewModal}
+              />
+
+              <div
+                className={clsx('size-table-overlay', {
+                  'overlay-active': showSizeTable,
+                })}
+                onClick={handleCloseSizeTable}
+              />
+
+              <div
+                className={clsx('auth-overlay', {
+                  'overlay-active': openAuthPopup,
+                })}
+                onClick={handleCloseAuthPopup}
+              />
+
+              <Toaster position='top-center' reverseOrder={false} />
+            </body>
+          </html>
+        </EarthoOneProvider>
+      ) : (
         <html lang='en'>
           <body>
-            <Layout>{children} </Layout>
-
-            <div
-              className={clsx('quick-view-modal-overlay', {
-                'overlay-active': showQuickViewModal,
-              })}
-              onClick={handleCloseQuickViewModal}
-            />
-
-            <div
-              className={clsx('size-table-overlay', {
-                'overlay-active': showSizeTable,
-              })}
-              onClick={handleCloseSizeTable}
-            />
-
-            <div
-              className={clsx('auth-overlay', {
-                'overlay-active': openAuthPopup,
-              })}
-              onClick={handleCloseAuthPopup}
-            />
-
-            <Toaster position='top-center' reverseOrder={false} />
+            <></>
           </body>
         </html>
-      </EarthoOneProvider>
+      )}
     </>
   )
 }
