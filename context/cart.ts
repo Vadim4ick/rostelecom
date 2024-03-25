@@ -4,6 +4,7 @@
 import { $api } from '@/api/api'
 import {
   addProducToCartFx,
+  deleteCartItemFx,
   getCartItemFx,
   updateCartItemCountFx,
 } from '@/api/cart'
@@ -12,6 +13,7 @@ import {
   IAddProductToCartFx,
   IAddProductsFromLSToCartFx,
   ICartItem,
+  IDeleteCartItemsFx,
   IUpdateCartItemCountFx,
 } from '@/types/cart'
 import { createDomain, createEffect, sample } from 'effector'
@@ -58,6 +60,7 @@ export const addProductsFromLSToCart =
   cart.createEvent<IAddProductsFromLSToCartFx>()
 
 export const updateCartItemCount = cart.createEvent<IUpdateCartItemCountFx>()
+export const deleteProductFromCart = cart.createEvent<IDeleteCartItemsFx>()
 
 export const $cart = cart
   .createStore<ICartItem[]>([])
@@ -72,6 +75,9 @@ export const $cart = cart
     cart.map((item) =>
       item._id === result.id ? { ...item, count: result.count } : item
     )
+  )
+  .on(deleteCartItemFx.done, (cart, { result }) =>
+    cart.filter((item) => item._id !== result.id)
   )
 
 export const $cartFromLs = cart
@@ -101,4 +107,11 @@ sample({
   source: $cart,
   fn: (_, data) => data,
   target: updateCartItemCountFx,
+})
+
+sample({
+  clock: deleteProductFromCart,
+  source: $cart,
+  fn: (_, data) => data,
+  target: deleteCartItemFx,
 })
