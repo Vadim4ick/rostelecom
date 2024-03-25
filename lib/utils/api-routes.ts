@@ -1,4 +1,4 @@
-import { Db, MongoClient } from 'mongodb'
+import { Db, MongoClient, ObjectId } from 'mongodb'
 import { shuffle } from './common'
 import jwt, { VerifyErrors } from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
@@ -157,4 +157,52 @@ export const getDataFromDBByCollection = async (
     .toArray()
 
   return NextResponse.json(items)
+}
+
+export const replaceProductsInCollection = async (
+  clientPromise: Promise<MongoClient>,
+  req: Request,
+  collection: string
+) => {
+  const { db, validatedTokenResult, reqBody, token } = await getAuthRouteData(
+    clientPromise,
+    req
+  )
+
+  if (validatedTokenResult.status !== 200) {
+    return NextResponse.json(validatedTokenResult)
+  }
+
+  if (!reqBody.items) {
+    return NextResponse.json({
+      message: 'items fields is required',
+      status: 404,
+    })
+  }
+
+  const user = await db
+    .collection('users')
+    .findOne({ email: parseJwt(token as string).email })
+
+  const items = (reqBody.items as { productId: string }[]).map((item) => ({
+    userId: user?._id,
+    ...item,
+    productId: new ObjectId(item.productId),
+  }))
+
+  await db.collection(collection).deleteMany({ userId: user?._id })
+
+  if (!items.length) {
+    return NextResponse.json({
+      status: 201,
+      items: [],
+    })
+  }
+
+  await db.collection(collection).insertMany(items)
+
+  return NextResponse.json({
+    status: 201,
+    items,
+  })
 }

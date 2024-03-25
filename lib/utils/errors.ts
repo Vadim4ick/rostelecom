@@ -2,7 +2,8 @@
 import { loginCheckFx, refreshTokenFx } from '@/api/auth'
 import { addProducToCartFx, getCartItemFx } from '@/api/cart'
 import { JWTError } from '@/const/jwt'
-import { IAddProductToCartFx } from '@/types/cart'
+import { addProductsFromLSToCartFx } from '@/context/cart'
+import { IAddProductToCartFx, IAddProductsFromLSToCartFx } from '@/types/cart'
 
 const handleJWTError = async (
   errorName: string,
@@ -28,6 +29,12 @@ const handleJWTError = async (
             ...(payload as IAddProductToCartFx),
             jwt: newTokens.accessTokens,
           })
+        case 'addProductsFromLSToCartFx':
+          return await addProductsFromLSToCartFx({
+            ...(payload as IAddProductsFromLSToCartFx),
+            jwt: newTokens.accessTokens,
+          })
+
         case 'loginCheckFx':
           await loginCheckFx({
             jwt: newTokens.accessTokens,

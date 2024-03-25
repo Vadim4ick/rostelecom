@@ -25,9 +25,9 @@ export interface IProductCounterProps {
 }
 
 export interface IAddToCartBtnProps {
-  // handleAddToCart: VoidFunction
-  // addToCartSpinner: boolean
-  // btnDisabled?: boolean
+  handleAddToCart: VoidFunction
+  addToCartSpinner: boolean
+  btnDisabled?: boolean
   text: string
   className?: string
 }

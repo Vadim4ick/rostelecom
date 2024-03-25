@@ -1,3 +1,5 @@
+'use client'
+
 import { loadOneProductFx } from '@/api/goods'
 import { getBestsellerProductFx, getNewProductFx } from '@/api/main-page'
 import { IProduct } from '@/types/common'

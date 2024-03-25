@@ -1,3 +1,5 @@
+'use client'
+
 import { createDomain, sample } from 'effector'
 import { IUser } from '@/types/user'
 import { loginCheckFx } from '@/api/auth'

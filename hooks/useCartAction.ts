@@ -1,3 +1,5 @@
+'use client'
+
 import { $currentProduct } from '@/context/goods'
 import { useUnit } from 'effector-react'
 import { useState } from 'react'
@@ -8,6 +10,7 @@ import {
   addItemToCart,
   addProductToCartBySizeTable,
 } from '@/lib/utils/cart'
+import { updateCartItemCount } from '@/context/cart'
 
 const useCartAction = (isSizeTable = false) => {
   const product = useUnit($currentProduct)
@@ -19,7 +22,6 @@ const useCartAction = (isSizeTable = false) => {
   const currentCartItems = currentCartByAuth.filter(
     (item) => item.productId === product._id
   )
-
   const cartItemBySize = currentCartItems.find(
     (item) => item.size === selectedSize
   )
@@ -27,6 +29,7 @@ const useCartAction = (isSizeTable = false) => {
   const isProductInCart = isItemInList(currentCartByAuth, product._id)
 
   const [addToCartSpinner, setAddToCartSpinner] = useState(false)
+  const [updateCountSpinner, setUpdateCountSpinner] = useState(false)
 
   const handleAddToCart = (countFromCounter?: number) => {
     if (isProductInCart) {
@@ -43,25 +46,37 @@ const useCartAction = (isSizeTable = false) => {
             : +cartItemBySize.count + 1
           : +cartItemBySize.count + 1
 
-        return addCartItemToLs(product, selectedSize, count)
-      }
+        // return console.log(count, 'test')
 
-      if (isSizeTable) {
-        return addItemToCart(
-          product,
-          setAddToCartSpinner,
-          countFromCounter || 1,
-          selectedSize
-        )
-      }
+        updateCartItemCount({
+          jwt: auth.accessToken,
+          id: cartItemBySize._id as string,
+          setSpinner: setUpdateCountSpinner,
+          count,
+        })
 
-      addProductToCartBySizeTable(
+        addCartItemToLs(product, selectedSize, count)
+        return
+      }
+    }
+
+    if (isSizeTable) {
+      addItemToCart(
         product,
         setAddToCartSpinner,
         countFromCounter || 1,
         selectedSize
       )
+
+      return
     }
+
+    addProductToCartBySizeTable(
+      product,
+      setAddToCartSpinner,
+      countFromCounter || 1,
+      selectedSize
+    )
   }
 
   return {
@@ -75,6 +90,7 @@ const useCartAction = (isSizeTable = false) => {
     isProductInCart,
     currentCartByAuth,
     setAddToCartSpinner,
+    updateCountSpinner,
   }
 }
 

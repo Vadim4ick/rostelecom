@@ -7,7 +7,11 @@ import ProductSubtitle from '@/components/elements/ProductSubtitle/ProductSubtit
 
 import styles from '@/styles/product-list-item/index.module.scss'
 import stylesForAd from '@/styles/ad/index.module.scss'
-import { addOverflowHiddenBody, formatPrice } from '@/lib/utils/common'
+import {
+  addOverflowHiddenBody,
+  formatPrice,
+  isItemInList,
+} from '@/lib/utils/common'
 import { ProductLabel } from './ProductLabel'
 import ProductItemActionBtn from '@/components/elements/ProductItemActionBtn/ProductItemActionBtn'
 import ProductAvailable from '@/components/elements/ProductAvailable/ProductAvailable'
@@ -25,8 +29,10 @@ const ProductsListItem = ({ item, title }: IProductsListItemProps) => {
   const { lang, translations } = useLang()
   const isTitleForNew = title === translations[lang].main_page.new_title
 
-  const { addToCartSpinner, isProductInCart, setAddToCartSpinner } =
+  const { addToCartSpinner, setAddToCartSpinner, currentCartByAuth } =
     useCartAction()
+
+  const isProductInCart = isItemInList(currentCartByAuth, item._id)
 
   const addToCart = () =>
     addProductToCartBySizeTable(item, setAddToCartSpinner, 1)
@@ -147,7 +153,7 @@ const ProductsListItem = ({ item, title }: IProductsListItemProps) => {
             {productsWithoutSizes.includes(item.type) ? (
               <button
                 onClick={addToCart}
-                className={clsx('btn-reset', {
+                className={clsx(`btn-reset ${styles.list__item__cart}`, {
                   [styles.list__item__cart_added]: isProductInCart,
                 })}
                 disabled={addToCartSpinner}
