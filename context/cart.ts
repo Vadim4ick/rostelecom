@@ -75,10 +75,7 @@ export const $cart = cart
 
 export const $cartFromLs = cart
   .createStore<ICartItem[]>([])
-  .on(setCartFromLs, (_, cart) => {
-    console.log('cart', cart)
-    return cart
-  })
+  .on(setCartFromLs, (_, cart) => cart)
 
 sample({
   clock: addProductToCart,

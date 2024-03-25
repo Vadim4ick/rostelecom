@@ -19,7 +19,18 @@ import ProductItemActionBtn from '@/components/elements/ProductItemActionBtn/Pro
 const QuickViewModal = () => {
   const { lang, translations } = useLang()
 
-  const { product, selectedSize, setSelectedSize } = useCartAction()
+  const {
+    product,
+    selectedSize,
+    setSelectedSize,
+    cartItemBySize,
+    handleAddToCart,
+    addToCartSpinner,
+    updateCountSpinner,
+    allCurrentCartItemCount,
+  } = useCartAction()
+
+  const addToCart = () => handleAddToCart(+(cartItemBySize?.count || 1))
 
   const images = useProductImages(product)
 
@@ -133,13 +144,13 @@ const QuickViewModal = () => {
               <AddToCartBtn
                 className={styles.modal__right__bottom__add}
                 text={translations[lang].product.to_cart}
-                // handleAddToCart={addToCart}
-                // addToCartSpinner={addToCartSpinner || updateCountSpinner}
-                // btnDisabled={
-                //   addToCartSpinner ||
-                //   updateCountSpinner ||
-                //   allCurrentCartItemCount === +product.inStock
-                // }
+                handleAddToCart={addToCart}
+                addToCartSpinner={addToCartSpinner || updateCountSpinner}
+                btnDisabled={
+                  addToCartSpinner ||
+                  updateCountSpinner ||
+                  allCurrentCartItemCount === +product.inStock
+                }
               />
             </div>
           </div>

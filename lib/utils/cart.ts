@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { ICartItem } from '@/types/cart'
 import { IProduct } from '@/types/common'
 import { handleShowSizeTable, idGenerator, isUserAuth } from './common'
@@ -26,12 +27,17 @@ export const addCartItemToLs = (
   )
 
   if (existingItem) {
-    const updatedCount =
+    const updatedCountWithSize =
       existingItem.count !== count ? count : +existingItem.count + 1
 
     const updatedCart = cartFromLs.map((item) =>
       item.productId === existingItem.productId && item.size === selectedSize
-        ? { ...existingItem, count: updatedCount }
+        ? {
+            ...existingItem,
+            count: selectedSize.length
+              ? updatedCountWithSize
+              : +existingItem.count + 1,
+          }
         : item
     )
 
