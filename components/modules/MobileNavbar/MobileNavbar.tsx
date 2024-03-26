@@ -8,9 +8,12 @@ import { useLang } from '@/hooks/useLang'
 import { addOverflowHiddenBody } from '@/lib/utils/common'
 import Link from 'next/link'
 import { CatalogMenu } from '../Header/CatalogMenu'
+import { useCartByAuth } from '@/hooks/useCartByAuth'
 
 const MobileNavbar = () => {
   const { lang, translations } = useLang()
+
+  const currentCartByAuth = useCartByAuth()
 
   const handleOpenMenu = () => {
     addOverflowHiddenBody()
@@ -45,6 +48,9 @@ const MobileNavbar = () => {
         </Link>
 
         <Link href={'/cart'} className='mobile-navbar__btn'>
+          {!!currentCartByAuth.length && (
+            <span className='not-empty not-empty-mobile' />
+          )}
           {translations[lang].breadcrumbs.cart}
         </Link>
 

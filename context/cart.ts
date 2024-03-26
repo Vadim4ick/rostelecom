@@ -55,6 +55,7 @@ export const loadCartItems = cart.createEvent<{ jwt: string }>()
 export const setCartFromLs = cart.createEvent<ICartItem[]>()
 export const addProductToCart = cart.createEvent<IAddProductToCartFx>()
 export const setTotalPrice = cart.createEvent<number>()
+export const setShouldShowEmpty = cart.createEvent<boolean>()
 
 export const addProductsFromLSToCart =
   cart.createEvent<IAddProductsFromLSToCartFx>()
@@ -87,6 +88,17 @@ export const $cartFromLs = cart
 export const $totalPrice = cart
   .createStore<number>(0)
   .on(setTotalPrice, (_, value) => value)
+
+export const $shouldShowEmpty = cart
+  .createStore<boolean>(false)
+  .on(setShouldShowEmpty, (_, value) => value)
+
+sample({
+  clock: loadCartItems,
+  source: $cart,
+  fn: (_, data) => data,
+  target: getCartItemFx,
+})
 
 sample({
   clock: addProductToCart,

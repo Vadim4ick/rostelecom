@@ -1,4 +1,5 @@
 import { closeAuthPopup, openAuthPopup, setIsAuth } from '@/context/auth'
+import { setShouldShowEmpty } from '@/context/cart'
 import { setCurrentProduct } from '@/context/goods'
 import {
   closeSearchModal,
@@ -165,9 +166,9 @@ export const deleteProductFromLS = <T>(
   event(updatedItems)
   withToast && toast.success(message)
 
-  // if (!updatedItems.length) {
-  //   setShouldShowEmpty(true)
-  // }
+  if (!updatedItems.length) {
+    setShouldShowEmpty(true)
+  }
 }
 
 export const showCountMessage = (count: string, lang: string) => {

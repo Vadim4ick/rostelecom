@@ -2,7 +2,11 @@
 import { ICartItem } from '@/types/cart'
 import { IProduct } from '@/types/common'
 import { handleShowSizeTable, idGenerator, isUserAuth } from './common'
-import { addProductToCart, setCartFromLs } from '@/context/cart'
+import {
+  addProductToCart,
+  setCartFromLs,
+  setShouldShowEmpty,
+} from '@/context/cart'
 import toast from 'react-hot-toast'
 import { productsWithoutSizes } from '@/const/product'
 
@@ -21,6 +25,8 @@ export const addCartItemToLs = (
   if (!cartFromLs) {
     cartFromLs = []
   }
+
+  setShouldShowEmpty(false)
 
   const existingItem = cartFromLs.find(
     (item) => item.productId === product._id && item.size === selectedSize

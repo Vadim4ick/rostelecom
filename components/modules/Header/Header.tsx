@@ -18,16 +18,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import { loginCheckFx } from '@/api/auth'
 import { useEffect } from 'react'
-import { $user } from '@/context/user'
-import { useCartByAuth } from '@/hooks/useCartByAuth'
-import { addProductsFromLSToCart, setCartFromLs } from '@/context/cart'
+import {
+  addProductsFromLSToCart,
+  setCartFromLs,
+  setShouldShowEmpty,
+} from '@/context/cart'
 import { setLang } from '@/context/lang'
 
 const Header = () => {
   const { lang, translations } = useLang()
   const [auth, loginCheckSpinner] = useUnit([$isAuth, loginCheckFx.pending])
 
-  const currentCartByAuth = useCartByAuth()
+  // const currentCartByAuth = useCartByAuth()
 
   const handleOpenMenu = () => {
     openMenu()
@@ -42,6 +44,7 @@ const Header = () => {
   useEffect(() => {
     const lang = JSON.parse(localStorage.getItem('lang') as string)
     const cart = JSON.parse(localStorage.getItem('cart') as string)
+    const authorization = JSON.parse(localStorage.getItem('auth') as string)
 
     if (lang) {
       if (lang === 'ru' || lang === 'en') {
@@ -51,7 +54,15 @@ const Header = () => {
 
     triggerLoginCheck()
 
-    if (cart) {
+    if (authorization?.accessToken) {
+      return
+    }
+
+    if (cart && Array.isArray(cart)) {
+      if (!cart.length) {
+        setShouldShowEmpty(true)
+        return
+      }
       setCartFromLs(cart)
     }
   }, [])

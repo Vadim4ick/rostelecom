@@ -135,12 +135,12 @@ export const parseJwt = (token: string) =>
   JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
 
 export const getDataFromDBByCollection = async (
-  clinetPromise: Promise<MongoClient>,
+  clientPromise: Promise<MongoClient>,
   req: Request,
   collection: string
 ) => {
-  const { db, token, validatedTokenResult } = await getAuthRouteData(
-    clinetPromise,
+  const { db, validatedTokenResult, token } = await getAuthRouteData(
+    clientPromise,
     req,
     false
   )
@@ -153,7 +153,7 @@ export const getDataFromDBByCollection = async (
 
   const items = await db
     .collection(collection)
-    .find({ user: user?._id })
+    .find({ userId: user?._id })
     .toArray()
 
   return NextResponse.json(items)
