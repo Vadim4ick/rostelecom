@@ -17,6 +17,9 @@ import {
 import { $openAuthPopup } from '@/context/auth'
 import { Toaster } from 'react-hot-toast'
 import { EarthoOneProvider } from '@eartho/one-client-react'
+import { motion } from 'framer-motion'
+import CookieAlert from '../modules/CookieAlert/CookieAlert'
+import { Next13ProgressBar } from 'next13-progressbar'
 
 const PagesLayout = ({ children }: { children: ReactNode }) => {
   const [client, setClient] = useState(false)
@@ -26,6 +29,17 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
     $showSizeTable,
     $openAuthPopup,
   ])
+
+  const [cookieAlertOpen, setCookieAlertOpen] = useState(false)
+
+  useEffect(() => {
+    const checkCookie = document.cookie.indexOf('CookieBy=Rostelecom')
+    console.log(checkCookie)
+
+    checkCookie != -1
+      ? setCookieAlertOpen(false)
+      : setTimeout(() => setCookieAlertOpen(true), 3000)
+  }, [])
 
   const handleCloseQuickViewModal = () => {
     removeOverflowHiddenBody()
@@ -46,6 +60,8 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
         >
           <html lang='en'>
             <body>
+              <Next13ProgressBar height='4px' color='#9466FF' showOnShallow />
+
               <Layout>{children} </Layout>
 
               <div
@@ -69,6 +85,16 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
                 onClick={handleCloseAuthPopup}
               />
 
+              {cookieAlertOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.5 }}
+                  className='cookie-popup'
+                >
+                  <CookieAlert setCookieAlertOpen={setCookieAlertOpen} />
+                </motion.div>
+              )}
               <Toaster position='top-center' reverseOrder={false} />
             </body>
           </html>

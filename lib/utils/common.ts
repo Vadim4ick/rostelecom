@@ -169,3 +169,19 @@ export const deleteProductFromLS = <T>(
   //   setShouldShowEmpty(true)
   // }
 }
+
+export const showCountMessage = (count: string, lang: string) => {
+  if (count == '11' || count == '12' || count == '13' || count == '14') {
+    return lang === 'ru' ? 'товаров' : 'items'
+  }
+
+  if (count.endsWith('1')) {
+    return lang === 'ru' ? 'товар' : 'item'
+  }
+
+  if (count.endsWith('2') || count.endsWith('3') || count.endsWith('4')) {
+    return lang === 'ru' ? 'товара' : 'items'
+  }
+
+  return lang === 'ru' ? 'товаров' : 'items'
+}
