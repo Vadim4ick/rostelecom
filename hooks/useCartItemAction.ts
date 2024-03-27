@@ -3,7 +3,11 @@ import { ICartItem } from '@/types/cart'
 import { usePriceAction } from './usePriceAction'
 import { usePriceAnimation } from './usePriceAnimation'
 import { deleteProductFromLS, isUserAuth } from '@/lib/utils/common'
-import { deleteProductFromCart, setCartFromLs } from '@/context/cart'
+import {
+  deleteProductFromCart,
+  setCartFromLs,
+  setShouldShowEmpty,
+} from '@/context/cart'
 
 export const useCartItemAction = (cartItem: ICartItem) => {
   const [deleteSpinner, setDeleteSpinner] = useState(false)
@@ -36,6 +40,7 @@ export const useCartItemAction = (cartItem: ICartItem) => {
         cartItem.clientId,
         'cart',
         setCartFromLs,
+        setShouldShowEmpty,
         'Удалено из карзины!'
       )
       return
@@ -43,7 +48,14 @@ export const useCartItemAction = (cartItem: ICartItem) => {
 
     const auth = JSON.parse(localStorage.getItem('auth') as string)
 
-    deleteProductFromLS(cartItem.clientId, 'cart', setCartFromLs, '', false)
+    deleteProductFromLS(
+      cartItem.clientId,
+      'cart',
+      setCartFromLs,
+      setShouldShowEmpty,
+      '',
+      false
+    )
 
     deleteProductFromCart({
       jwt: auth.accessToken,
