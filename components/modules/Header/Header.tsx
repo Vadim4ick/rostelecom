@@ -28,6 +28,8 @@ import {
   $favorites,
   $favoritesFromLs,
   addProductsFromLSToFavorites,
+  setFavoritesFromLs,
+  setShowEmptyFavorites,
 } from '@/context/favorites'
 import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
 
@@ -51,6 +53,9 @@ const Header = () => {
     const lang = JSON.parse(localStorage.getItem('lang') as string)
     const cart = JSON.parse(localStorage.getItem('cart') as string)
     const authorization = JSON.parse(localStorage.getItem('auth') as string)
+    const favoritesFromLS = JSON.parse(
+      localStorage.getItem('favorites') as string
+    )
 
     if (lang) {
       if (lang === 'ru' || lang === 'en') {
@@ -60,6 +65,14 @@ const Header = () => {
 
     triggerLoginCheck()
 
+    if (!favoritesFromLS || !favoritesFromLS?.length) {
+      setShowEmptyFavorites(true)
+    }
+
+    if (!cart || !cart?.length) {
+      setShouldShowEmpty(true)
+    }
+
     if (authorization?.accessToken) {
       return
     }
@@ -67,9 +80,17 @@ const Header = () => {
     if (cart && Array.isArray(cart)) {
       if (!cart.length) {
         setShouldShowEmpty(true)
-        return
+      } else {
+        setCartFromLs(cart)
       }
-      setCartFromLs(cart)
+    }
+
+    if (favoritesFromLS && Array.isArray(favoritesFromLS)) {
+      if (!favoritesFromLS.length) {
+        setShowEmptyFavorites(true)
+      } else {
+        setFavoritesFromLs(favoritesFromLS)
+      }
     }
   }, [])
 

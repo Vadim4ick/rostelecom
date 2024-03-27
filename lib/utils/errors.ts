@@ -6,6 +6,7 @@ import { addProductsFromLSToCartFx } from '@/context/cart'
 import {
   addProductToFavoriteFx,
   addProductsFromLsToFavoritesFx,
+  deleteFavoriteItemFx,
   getFavoriteItemsFx,
 } from '@/context/favorites'
 import {
@@ -61,6 +62,11 @@ const handleJWTError = async (
         case 'addProductsFromLsToFavoritesFx':
           return await addProductsFromLsToFavoritesFx({
             ...(payload as IAddProductsFromLSToFavoriteFx),
+            jwt: newTokens.accessTokens,
+          })
+        case 'deleteFavoriteItemFx':
+          return await deleteFavoriteItemFx({
+            ...(payload as IDeleteCartItemsFx),
             jwt: newTokens.accessTokens,
           })
 

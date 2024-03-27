@@ -1,5 +1,6 @@
 import { closeAuthPopup, openAuthPopup, setIsAuth } from '@/context/auth'
 import { setShouldShowEmpty } from '@/context/cart'
+import { setShowEmptyFavorites } from '@/context/favorites'
 import { setCurrentProduct } from '@/context/goods'
 import {
   closeSearchModal,
@@ -168,6 +169,7 @@ export const deleteProductFromLS = <T>(
 
   if (!updatedItems.length) {
     setShouldShowEmpty(true)
+    setShowEmptyFavorites(true)
   }
 }
 

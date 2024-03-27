@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-indent */
 'use client'
 
+import { loginCheckFx } from '@/api/auth'
 import { getCartItemFx } from '@/api/cart'
 import { HeadingWithCount } from '@/components/elements/HeadingWithCount/HeadingWithCount'
 import Breadcrumbs from '@/components/modules/Breadcrumbs/Breadcrumbs'
@@ -15,6 +16,7 @@ import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
 import { useLang } from '@/hooks/useLang'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { countWholeCartItemsAmount } from '@/lib/utils/cart'
+import { isUserAuth } from '@/lib/utils/common'
 import styles from '@/styles/cart-page/index.module.scss'
 import cartSkeletonStyles from '@/styles/cart-skeleton/index.module.scss'
 import { useUnit } from 'effector-react'
@@ -36,6 +38,8 @@ const CartPage = () => {
   const [isCorrectPromotionalCode, setIsCorrectPromotionalCode] =
     useState(false)
 
+  const loginCheckSpinner = useUnit(loginCheckFx.pending)
+
   return (
     <main>
       <Breadcrumbs
@@ -54,7 +58,9 @@ const CartPage = () => {
 
             <div className={styles.cart__inner}>
               <div className={styles.cart__left}>
-                {cartSpinner && (
+                {(isUserAuth()
+                  ? cartSpinner || loginCheckSpinner
+                  : cartSpinner) && (
                   <motion.ul
                     {...basePropsForMotion}
                     className={cartSkeletonStyles.skeleton}
@@ -68,7 +74,6 @@ const CartPage = () => {
                     ))}
                   </motion.ul>
                 )}
-
                 {!cartSpinner && (
                   <motion.ul
                     {...basePropsForMotion}
