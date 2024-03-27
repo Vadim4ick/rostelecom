@@ -9,9 +9,9 @@ import { PromotionalCode } from '@/components/modules/CartPage/PromotionalCode'
 import { EmptyPageContent } from '@/components/modules/EmptyPageContent/EmptyPageContent'
 import { OrderInfoBlock } from '@/components/modules/OrderInfoBlock/OrderInfoBlock'
 import { basePropsForMotion } from '@/const/motion'
-import { $shouldShowEmpty } from '@/context/cart'
+import { $cart, $cartFromLs, $shouldShowEmpty } from '@/context/cart'
 import { useBreadcrumbs } from '@/hooks/useBreadcrumbs'
-import { useCartByAuth } from '@/hooks/useCartByAuth'
+import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
 import { useLang } from '@/hooks/useLang'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { countWholeCartItemsAmount } from '@/lib/utils/cart'
@@ -22,7 +22,7 @@ import { motion } from 'framer-motion'
 import { useState } from 'react'
 
 const CartPage = () => {
-  const currentCartByAuth = useCartByAuth()
+  const currentCartByAuth = useGoodsByAuth($cart, $cartFromLs)
   const { lang, translations } = useLang()
 
   const [cartSpinner, shouldShowEmpty] = useUnit([

@@ -34,7 +34,6 @@ const PagesLayout = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     const checkCookie = document.cookie.indexOf('CookieBy=Rostelecom')
-    console.log(checkCookie)
 
     checkCookie != -1
       ? setCookieAlertOpen(false)

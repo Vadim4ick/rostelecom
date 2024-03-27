@@ -6,6 +6,8 @@ import Tooltip from '../Tooltip/Tooltip'
 import { IProductItemActionBtnProps } from '@/types/elements'
 import styles from '@/styles/product-item-action-btn/index.module.scss'
 import tooltipStyles from '@/styles/tooltip/index.module.scss'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 const ProductItemActionBtn = ({
   text,
@@ -37,7 +39,7 @@ const ProductItemActionBtn = ({
         onMouseLeave={hideTooltip}
         style={{ marginBottom: marginBottom || 16 }}
       >
-        {/* {spinner && <FontAwesomeIcon icon={faSpinner} spin color='#fff' />} */}
+        {spinner && <FontAwesomeIcon icon={faSpinner} spin color='#fff' />}
       </button>
 
       {withTooltip && (

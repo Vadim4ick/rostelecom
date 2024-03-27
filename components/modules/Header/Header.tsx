@@ -24,12 +24,18 @@ import {
   setShouldShowEmpty,
 } from '@/context/cart'
 import { setLang } from '@/context/lang'
+import {
+  $favorites,
+  $favoritesFromLs,
+  addProductsFromLSToFavorites,
+} from '@/context/favorites'
+import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
 
 const Header = () => {
   const { lang, translations } = useLang()
   const [auth, loginCheckSpinner] = useUnit([$isAuth, loginCheckFx.pending])
 
-  // const currentCartByAuth = useCartByAuth()
+  const currentFavoritesByAuth = useGoodsByAuth($favorites, $favoritesFromLs)
 
   const handleOpenMenu = () => {
     openMenu()
@@ -71,11 +77,21 @@ const Header = () => {
     if (auth) {
       const cartFromLs = JSON.parse(localStorage.getItem('cart') as string)
       const authorization = JSON.parse(localStorage.getItem('auth') as string)
+      const favoritesFromLS = JSON.parse(
+        localStorage.getItem('favorites') as string
+      )
 
       if (cartFromLs && Array.isArray(cartFromLs)) {
         addProductsFromLSToCart({
           jwt: authorization.accessToken,
           cartItems: cartFromLs,
+        })
+      }
+
+      if (favoritesFromLS && Array.isArray(favoritesFromLS)) {
+        addProductsFromLSToFavorites({
+          jwt: authorization.accessToken,
+          favoriteItems: favoritesFromLS,
         })
       }
     }
@@ -106,7 +122,11 @@ const Header = () => {
             <Link
               href={'/favorites'}
               className='header__links__item__btn header__links__item__btn--favorites'
-            />
+            >
+              {!!currentFavoritesByAuth.length && (
+                <span className='not-empty' />
+              )}
+            </Link>
           </li>
 
           <li className='header__links__item'>

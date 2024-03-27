@@ -1,4 +1,5 @@
-import { useCartByAuth } from '@/hooks/useCartByAuth'
+import { $cart, $cartFromLs } from '@/context/cart'
+import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
 import { useLang } from '@/hooks/useLang'
 import { useTotalPrice } from '@/hooks/useTotalPrice'
 import { countWholeCartItemsAmount } from '@/lib/utils/cart'
@@ -13,7 +14,7 @@ const OrderInfoBlock = ({
   isOrderPage,
 }: IOrderInfoBlock) => {
   const { lang, translations } = useLang()
-  const currentCartByAuth = useCartByAuth()
+  const currentCartByAuth = useGoodsByAuth($cart, $cartFromLs)
   const [isUserAgree, setIsUserAgree] = useState(false)
   const { animatedPrice } = useTotalPrice()
 
