@@ -1,7 +1,12 @@
+/* eslint-disable indent */
 import { ICartItem } from '@/types/cart'
 import { IProduct } from '@/types/common'
 import { handleShowSizeTable, idGenerator, isUserAuth } from './common'
-import { addProductToCart, setCartFromLs } from '@/context/cart'
+import {
+  addProductToCart,
+  setCartFromLs,
+  setShouldShowEmpty,
+} from '@/context/cart'
 import toast from 'react-hot-toast'
 import { productsWithoutSizes } from '@/const/product'
 
@@ -21,17 +26,24 @@ export const addCartItemToLs = (
     cartFromLs = []
   }
 
+  setShouldShowEmpty(false)
+
   const existingItem = cartFromLs.find(
     (item) => item.productId === product._id && item.size === selectedSize
   )
 
   if (existingItem) {
-    const updatedCount =
+    const updatedCountWithSize =
       existingItem.count !== count ? count : +existingItem.count + 1
 
     const updatedCart = cartFromLs.map((item) =>
       item.productId === existingItem.productId && item.size === selectedSize
-        ? { ...existingItem, count: updatedCount }
+        ? {
+            ...existingItem,
+            count: selectedSize.length
+              ? updatedCountWithSize
+              : +existingItem.count + 1,
+          }
         : item
     )
 
@@ -109,3 +121,21 @@ export const addProductToCartBySizeTable = (
 
   handleShowSizeTable(product)
 }
+
+export const updateCartItemCountInLS = (cartItemId: string, count: number) => {
+  let cart: ICartItem[] = JSON.parse(localStorage.getItem('cart') as string)
+
+  if (!cart) {
+    cart = []
+  }
+
+  const updatedCart = cart.map((item) =>
+    item.clientId === cartItemId ? { ...item, count } : item
+  )
+
+  localStorage.setItem('cart', JSON.stringify(updatedCart))
+  setCartFromLs(updatedCart as ICartItem[])
+}
+
+export const countWholeCartItemsAmount = (cart: ICartItem[]) =>
+  cart.reduce((defaultCount, item) => defaultCount + +item.count, 0)

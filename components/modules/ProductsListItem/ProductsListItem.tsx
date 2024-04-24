@@ -7,7 +7,11 @@ import ProductSubtitle from '@/components/elements/ProductSubtitle/ProductSubtit
 
 import styles from '@/styles/product-list-item/index.module.scss'
 import stylesForAd from '@/styles/ad/index.module.scss'
-import { addOverflowHiddenBody, formatPrice } from '@/lib/utils/common'
+import {
+  addOverflowHiddenBody,
+  formatPrice,
+  isItemInList,
+} from '@/lib/utils/common'
 import { ProductLabel } from './ProductLabel'
 import ProductItemActionBtn from '@/components/elements/ProductItemActionBtn/ProductItemActionBtn'
 import ProductAvailable from '@/components/elements/ProductAvailable/ProductAvailable'
@@ -20,16 +24,35 @@ import { addProductToCartBySizeTable } from '@/lib/utils/cart'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import clsx from 'clsx'
+import { setIsAddToFavorites } from '@/context/favorites'
+import { useFavoritesAction } from '@/hooks/useFavoritesAction'
+import { useComparisonAction } from '@/hooks/useComparisonAction'
 
 const ProductsListItem = ({ item, title }: IProductsListItemProps) => {
   const { lang, translations } = useLang()
   const isTitleForNew = title === translations[lang].main_page.new_title
 
-  const { addToCartSpinner, isProductInCart, setAddToCartSpinner } =
+  const { addToCartSpinner, setAddToCartSpinner, currentCartByAuth } =
     useCartAction()
 
-  const addToCart = () =>
+  const isProductInCart = isItemInList(currentCartByAuth, item._id)
+
+  const {
+    addToFavoritesSpinner,
+    isProductInFavorites,
+    handleAddProductToFavorites,
+  } = useFavoritesAction(item)
+
+  const {
+    addToComparisonSpinner,
+    handleAddToComparison,
+    isProductInComparison,
+  } = useComparisonAction(item)
+
+  const addToCart = () => {
+    setIsAddToFavorites(false)
     addProductToCartBySizeTable(item, setAddToCartSpinner, 1)
+  }
 
   const isMedia800 = useMediaQuery(800)
 
@@ -99,18 +122,27 @@ const ProductsListItem = ({ item, title }: IProductsListItemProps) => {
           <div className={styles.list__item__actions}>
             <ProductItemActionBtn
               text={translations[lang].product.add_to_favorites}
-              // iconClass={`${
-              //   addToFavoritesSpinner
-              //     ? 'actions__btn_spinner'
-              //     : isProductInFavorites
-              //       ? 'actions__btn_favorite_checked'
-              //       : 'actions__btn_favorite'
-              // }`}
-              iconClass='actions__btn_favorite'
+              iconClass={`${
+                addToFavoritesSpinner
+                  ? 'actions__btn_spinner'
+                  : isProductInFavorites
+                    ? 'actions__btn_favorite_checked'
+                    : 'actions__btn_favorite'
+              }`}
+              spinner={addToFavoritesSpinner}
+              callback={handleAddProductToFavorites}
             />
             <ProductItemActionBtn
+              spinner={addToComparisonSpinner}
               text={translations[lang].product.add_to_comparison}
-              iconClass='actions__btn_comparison'
+              iconClass={`${
+                addToComparisonSpinner
+                  ? 'actions__btn_spinner'
+                  : isProductInComparison
+                    ? 'actions__btn_comparison_checked'
+                    : 'actions__btn_comparison'
+              }`}
+              callback={handleAddToComparison}
             />
             {!isMedia800 && (
               <ProductItemActionBtn
@@ -147,7 +179,7 @@ const ProductsListItem = ({ item, title }: IProductsListItemProps) => {
             {productsWithoutSizes.includes(item.type) ? (
               <button
                 onClick={addToCart}
-                className={clsx('btn-reset', {
+                className={clsx(`btn-reset ${styles.list__item__cart}`, {
                   [styles.list__item__cart_added]: isProductInCart,
                 })}
                 disabled={addToCartSpinner}

@@ -1,4 +1,4 @@
-import { Db, MongoClient } from 'mongodb'
+import { Db, MongoClient, ObjectId } from 'mongodb'
 import { shuffle } from './common'
 import jwt, { VerifyErrors } from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
@@ -135,12 +135,12 @@ export const parseJwt = (token: string) =>
   JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString())
 
 export const getDataFromDBByCollection = async (
-  clinetPromise: Promise<MongoClient>,
+  clientPromise: Promise<MongoClient>,
   req: Request,
   collection: string
 ) => {
-  const { db, token, validatedTokenResult } = await getAuthRouteData(
-    clinetPromise,
+  const { db, validatedTokenResult, token } = await getAuthRouteData(
+    clientPromise,
     req,
     false
   )
@@ -153,8 +153,77 @@ export const getDataFromDBByCollection = async (
 
   const items = await db
     .collection(collection)
-    .find({ user: user?._id })
+    .find({ userId: user?._id })
     .toArray()
 
   return NextResponse.json(items)
+}
+
+export const replaceProductsInCollection = async (
+  clientPromise: Promise<MongoClient>,
+  req: Request,
+  collection: string
+) => {
+  const { db, validatedTokenResult, reqBody, token } = await getAuthRouteData(
+    clientPromise,
+    req
+  )
+
+  if (validatedTokenResult.status !== 200) {
+    return NextResponse.json(validatedTokenResult)
+  }
+
+  if (!reqBody.items) {
+    return NextResponse.json({
+      message: 'items fields is required',
+      status: 404,
+    })
+  }
+
+  const user = await db
+    .collection('users')
+    .findOne({ email: parseJwt(token as string).email })
+
+  const items = (reqBody.items as { productId: string }[]).map((item) => ({
+    userId: user?._id,
+    ...item,
+    productId: new ObjectId(item.productId),
+  }))
+
+  await db.collection(collection).deleteMany({ userId: user?._id })
+
+  if (!items.length) {
+    return NextResponse.json({
+      status: 201,
+      items: [],
+    })
+  }
+
+  await db.collection(collection).insertMany(items)
+
+  return NextResponse.json({
+    status: 201,
+    items,
+  })
+}
+
+export const deleteProduct = async (
+  clientPromise: Promise<MongoClient>,
+  req: Request,
+  id: string,
+  collection: string
+) => {
+  const { db, validatedTokenResult } = await getAuthRouteData(
+    clientPromise,
+    req,
+    false
+  )
+
+  if (validatedTokenResult.status !== 200) {
+    return NextResponse.json(validatedTokenResult)
+  }
+
+  await db.collection(collection).deleteOne({ _id: new ObjectId(id) })
+
+  return NextResponse.json({ status: 204, id })
 }

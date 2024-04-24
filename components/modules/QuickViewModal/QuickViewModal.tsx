@@ -15,11 +15,40 @@ import { ProductCounter } from '../ProductsListItem/ProductCounter'
 import { AddToCartBtn } from '../ProductsListItem/AddToCartBtn'
 import Link from 'next/link'
 import ProductItemActionBtn from '@/components/elements/ProductItemActionBtn/ProductItemActionBtn'
+import { ICartItem } from '@/types/cart'
+import { useComparisonAction } from '@/hooks/useComparisonAction'
+import { useFavoritesAction } from '@/hooks/useFavoritesAction'
 
 const QuickViewModal = () => {
   const { lang, translations } = useLang()
 
-  const { product, selectedSize, setSelectedSize } = useCartAction()
+  const {
+    product,
+    selectedSize,
+    setSelectedSize,
+    handleAddToCart,
+    addToCartSpinner,
+    updateCountSpinner,
+    currentCartItems,
+    allCurrentCartItemCount,
+    setCount,
+    existingItem,
+    count,
+  } = useCartAction()
+
+  const addToCart = () => handleAddToCart(count)
+
+  const {
+    addToComparisonSpinner,
+    handleAddToComparison,
+    isProductInComparison,
+  } = useComparisonAction(product)
+
+  const {
+    addToFavoritesSpinner,
+    handleAddProductToFavorites,
+    isProductInFavorites,
+  } = useFavoritesAction(product)
 
   const images = useProductImages(product)
 
@@ -38,14 +67,30 @@ const QuickViewModal = () => {
       <div className={styles.modal__actions}>
         <ProductItemActionBtn
           text={translations[lang].product.add_to_favorites}
-          iconClass={'actions__btn_favorite'}
+          iconClass={`${
+            addToFavoritesSpinner
+              ? 'actions__btn_spinner'
+              : isProductInFavorites
+                ? 'actions__btn_favorite_checked'
+                : 'actions__btn_favorite'
+          }`}
           withTooltip={false}
+          callback={handleAddProductToFavorites}
+          spinner={addToFavoritesSpinner}
         />
 
         <ProductItemActionBtn
           text={translations[lang].product.add_to_comparison}
-          iconClass={'actions__btn_comparison'}
+          iconClass={`${
+            addToComparisonSpinner
+              ? 'actions__btn_spinner'
+              : isProductInComparison
+                ? 'actions__btn_comparison_checked'
+                : 'actions__btn_comparison'
+          }`}
           withTooltip={false}
+          callback={handleAddToComparison}
+          spinner={addToComparisonSpinner}
         />
       </div>
 
@@ -93,7 +138,7 @@ const QuickViewModal = () => {
                     currentSize={[key, value]}
                     selectedSize={selectedSize}
                     setSelectedSize={setSelectedSize}
-                    currentCartItems={[]}
+                    currentCartItems={currentCartItems}
                   />
                 ))}
               </ul>
@@ -111,12 +156,12 @@ const QuickViewModal = () => {
               {!!selectedSize ? (
                 <ProductCounter
                   className={`counter ${styles.modal__right__bottom__counter}`}
-                  count={0}
-                  // totalCount={+product.inStock}
-                  // initialCount={+(existingItem?.count || 1)}
-                  // setCount={setCount}
-                  // cartItem={existingItem as ICartItem}
-                  // updateCountAsync={false}
+                  count={count}
+                  totalCount={+product.inStock}
+                  initialCount={+(existingItem?.count || 1)}
+                  setCount={setCount}
+                  cartItem={existingItem as ICartItem}
+                  updateCountAsync={false}
                 />
               ) : (
                 <div
@@ -124,8 +169,8 @@ const QuickViewModal = () => {
                   style={{ justifyContent: 'center' }}
                 >
                   <span>
-                    {translations[lang].product.total_in_cart} 0
-                    {/* {allCurrentCartItemCount} */}
+                    {translations[lang].product.total_in_cart}{' '}
+                    {allCurrentCartItemCount}
                   </span>
                 </div>
               )}
@@ -133,13 +178,13 @@ const QuickViewModal = () => {
               <AddToCartBtn
                 className={styles.modal__right__bottom__add}
                 text={translations[lang].product.to_cart}
-                // handleAddToCart={addToCart}
-                // addToCartSpinner={addToCartSpinner || updateCountSpinner}
-                // btnDisabled={
-                //   addToCartSpinner ||
-                //   updateCountSpinner ||
-                //   allCurrentCartItemCount === +product.inStock
-                // }
+                handleAddToCart={addToCart}
+                addToCartSpinner={addToCartSpinner || updateCountSpinner}
+                btnDisabled={
+                  addToCartSpinner ||
+                  updateCountSpinner ||
+                  allCurrentCartItemCount === +product.inStock
+                }
               />
             </div>
           </div>

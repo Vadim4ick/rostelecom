@@ -17,9 +17,7 @@ import BuyersListItems from './BuyersListItems'
 import ContactsListItems from './ContactsListItems'
 
 const Menu = () => {
-  const [showCatalogList, setShowCatalogList] = useState(false)
-  const [showBuyersList, setShowBuyersList] = useState(false)
-  const [showContactsList, setShowContactsList] = useState(false)
+  const [activeListId, setActiveListId] = useState(0)
 
   const menuIsOpen = useUnit($menuIsOpen)
 
@@ -28,6 +26,7 @@ const Menu = () => {
   const handleCloseMenu = () => {
     removeOverflowHiddenBody()
     closeMenu()
+    setActiveListId(0)
   }
 
   const pathname = usePathname()
@@ -44,23 +43,9 @@ const Menu = () => {
     handleCloseMenu()
   }
 
-  const handleShowCatalogList = () => {
-    setShowCatalogList(true)
-    setShowBuyersList(false)
-    setShowContactsList(false)
-  }
-
-  const handleShowBuyersList = () => {
-    setShowCatalogList(false)
-    setShowBuyersList(true)
-    setShowContactsList(false)
-  }
-
-  const handleContactsBuyersList = () => {
-    setShowCatalogList(false)
-    setShowBuyersList(false)
-    setShowContactsList(true)
-  }
+  const handleShowCatalogList = () => setActiveListId(1)
+  const handleShowBuyersList = () => setActiveListId(2)
+  const handleContactsBuyersList = () => setActiveListId(3)
 
   const clothLinks = [
     {
@@ -207,7 +192,7 @@ const Menu = () => {
               </button>
 
               <AnimatePresence>
-                {showCatalogList && (
+                {activeListId === 1 && (
                   <motion.ul
                     className='list-reset nav-menu__accordion'
                     initial={{ opacity: 0 }}
@@ -299,7 +284,7 @@ const Menu = () => {
 
             {!isMedia640 && (
               <AnimatePresence>
-                {showBuyersList && (
+                {activeListId === 2 && (
                   <motion.ul
                     className='list-reset nav-menu__accordion'
                     initial={{ opacity: 0 }}
@@ -336,7 +321,7 @@ const Menu = () => {
 
             {!isMedia640 && (
               <AnimatePresence>
-                {showContactsList && (
+                {activeListId === 3 && (
                   <motion.ul
                     className='list-reset nav-menu__accordion'
                     initial={{ opacity: 0 }}

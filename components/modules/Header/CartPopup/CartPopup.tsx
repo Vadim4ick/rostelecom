@@ -1,9 +1,18 @@
+import { getCartItemFx } from '@/api/cart'
 import { withClickOutside } from '@/components/hocs/withClickOutSide'
 import { useLang } from '@/hooks/useLang'
 import { IWrappedComponentProps } from '@/types/hocs'
+import { useUnit } from 'effector-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { forwardRef } from 'react'
+import CartPopupItem from './CartPopupItem'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { useTotalPrice } from '@/hooks/useTotalPrice'
+import { formatPrice } from '@/lib/utils/common'
+import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
+import { $cart, $cartFromLs } from '@/context/cart'
 
 const CartPopup = forwardRef<HTMLDivElement, IWrappedComponentProps>(
   ({ open, setOpen }, ref) => {
@@ -12,13 +21,19 @@ const CartPopup = forwardRef<HTMLDivElement, IWrappedComponentProps>(
     const handleShowPopup = () => setOpen(true)
     const handleHidePopup = () => setOpen(false)
 
+    const spinner = useUnit(getCartItemFx.pending)
+    const currentCartByAuth = useGoodsByAuth($cart, $cartFromLs)
+    const { animatedPrice } = useTotalPrice()
+
     return (
       <div className='cart-popup' ref={ref}>
         <Link
           className='header__links__item__btn header__links__item__btn--cart'
           href='/cart'
           onMouseEnter={handleShowPopup}
-        />
+        >
+          {!!currentCartByAuth.length && <span className='not-empty' />}
+        </Link>
 
         <AnimatePresence>
           {open && (
@@ -39,14 +54,41 @@ const CartPopup = forwardRef<HTMLDivElement, IWrappedComponentProps>(
                 {translations[lang].breadcrumbs.cart}
               </h3>
 
-              <ul className='list-reset cart-popup__cart-list'>
-                <li className='cart-popup__cart-list__empty-cart' />
-              </ul>
+              {spinner ? (
+                <div className='cart-popup__spinner'>
+                  <FontAwesomeIcon
+                    icon={faSpinner}
+                    spin
+                    color='#fff'
+                    size='3x'
+                  />
+                </div>
+              ) : (
+                <ul className='list-reset cart-popup__cart-list'>
+                  <AnimatePresence>
+                    {currentCartByAuth.length ? (
+                      currentCartByAuth.map((item) => (
+                        <motion.li
+                          key={item._id || item.clientId}
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          className='cart-list__item'
+                        >
+                          <CartPopupItem item={item} />
+                        </motion.li>
+                      ))
+                    ) : (
+                      <li className='cart-popup__cart-list__empty-cart' />
+                    )}
+                  </AnimatePresence>
+                </ul>
+              )}
 
               <div className='cart-popup__footer'>
                 <div className='cart-popup__footer__inner'>
                   <span>{translations[lang].common.order_price}:</span>
-                  <span>0 ₽</span>
+                  <span>{formatPrice(animatedPrice)} ₽</span>
                 </div>
                 <Link href='/order' className='cart-popup__footer__link'>
                   {translations[lang].breadcrumbs.order}

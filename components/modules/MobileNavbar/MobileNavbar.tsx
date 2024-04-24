@@ -8,9 +8,16 @@ import { useLang } from '@/hooks/useLang'
 import { addOverflowHiddenBody } from '@/lib/utils/common'
 import Link from 'next/link'
 import { CatalogMenu } from '../Header/CatalogMenu'
+import { $cart, $cartFromLs } from '@/context/cart'
+import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
+import { $favorites, $favoritesFromLs } from '@/context/favorites'
 
 const MobileNavbar = () => {
   const { lang, translations } = useLang()
+
+  const currentCartByAuth = useGoodsByAuth($cart, $cartFromLs)
+
+  const currentFavoritesByAuth = useGoodsByAuth($favorites, $favoritesFromLs)
 
   const handleOpenMenu = () => {
     addOverflowHiddenBody()
@@ -41,10 +48,16 @@ const MobileNavbar = () => {
         </button>
 
         <Link href={'/favorites'} className='mobile-navbar__btn'>
+          {!!currentFavoritesByAuth.length && (
+            <span className='not-empty not-empty-mobile-favorite' />
+          )}
           {translations[lang].breadcrumbs.favorites}
         </Link>
 
         <Link href={'/cart'} className='mobile-navbar__btn'>
+          {!!currentCartByAuth.length && (
+            <span className='not-empty not-empty-mobile' />
+          )}
           {translations[lang].breadcrumbs.cart}
         </Link>
 

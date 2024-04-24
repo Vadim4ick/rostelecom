@@ -15,16 +15,9 @@ import { EffectCoverflow } from 'swiper/modules'
 
 import 'swiper/css'
 import 'swiper/css/effect-coverflow'
-import { useEffect, useState } from 'react'
 
 const Hero = () => {
   const { lang, translations } = useLang()
-
-  const [isSwiperReady, setSwiperReady] = useState(false)
-
-  useEffect(() => {
-    setSwiperReady(true)
-  }, [])
 
   const slides = [
     {
@@ -55,35 +48,30 @@ const Hero = () => {
       <div className={`container ${styles.hero__container}`}>
         <span className={stylesForAd.ad}>{translations[lang].common.ad}</span>
 
-        {isSwiperReady && (
-          <Swiper
-            className={styles.hero__slider}
-            effect='coverflow'
-            coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 100,
-              modifier: 2.5,
-            }}
-            slidesPerView='auto'
-            initialSlide={2}
-            autoplay
-            // loop
-            onClick={handleSlideClick}
-            modules={[EffectCoverflow]}
-            grabCursor
-            centeredSlides
-          >
-            {slides.map((slide) => (
-              <SwiperSlide
-                className={styles.hero__slider__slide}
-                key={slide.id}
-              >
-                <HeroSlide slide={slide} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        )}
+        <Swiper
+          className={styles.hero__slider}
+          effect='coverflow'
+          coverflowEffect={{
+            rotate: 0,
+            stretch: 0,
+            depth: 100,
+            modifier: 2.5,
+          }}
+          slidesPerView='auto'
+          initialSlide={2}
+          autoplay
+          // loop
+          onClick={handleSlideClick}
+          modules={[EffectCoverflow]}
+          grabCursor
+          centeredSlides
+        >
+          {slides.map((slide) => (
+            <SwiperSlide className={styles.hero__slider__slide} key={slide.id}>
+              <HeroSlide slide={slide} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
 
         <ProductSubtitle />
 
