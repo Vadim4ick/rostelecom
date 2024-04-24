@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-indent */
 'use client'
 
-import { loginCheckFx } from '@/api/auth'
 import { getCartItemFx } from '@/api/cart'
 import { HeadingWithCount } from '@/components/elements/HeadingWithCount/HeadingWithCount'
 import Breadcrumbs from '@/components/modules/Breadcrumbs/Breadcrumbs'
@@ -11,6 +10,7 @@ import { EmptyPageContent } from '@/components/modules/EmptyPageContent/EmptyPag
 import { OrderInfoBlock } from '@/components/modules/OrderInfoBlock/OrderInfoBlock'
 import { basePropsForMotion } from '@/const/motion'
 import { $cart, $cartFromLs, $shouldShowEmpty } from '@/context/cart'
+import { loginCheckFx } from '@/context/user'
 import { useBreadcrumbs } from '@/hooks/useBreadcrumbs'
 import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
 import { useLang } from '@/hooks/useLang'

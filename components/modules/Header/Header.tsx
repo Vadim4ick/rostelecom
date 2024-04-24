@@ -16,7 +16,6 @@ import { useUnit } from 'effector-react'
 import { $isAuth } from '@/context/auth'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { loginCheckFx } from '@/api/auth'
 import { useEffect } from 'react'
 import {
   addProductsFromLSToCart,
@@ -32,12 +31,21 @@ import {
   setShowEmptyFavorites,
 } from '@/context/favorites'
 import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
+import {
+  $comparisonFromLs,
+  $comparsion,
+  addProductsFromLSToComparsion,
+  setComparisonFromLs,
+  setShouldShowEmptyComparison,
+} from '@/context/comparsion'
+import { loginCheckFx } from '@/context/user'
 
 const Header = () => {
   const { lang, translations } = useLang()
   const [auth, loginCheckSpinner] = useUnit([$isAuth, loginCheckFx.pending])
 
   const currentFavoritesByAuth = useGoodsByAuth($favorites, $favoritesFromLs)
+  const currentComparisonByAuth = useGoodsByAuth($comparsion, $comparisonFromLs)
 
   const handleOpenMenu = () => {
     openMenu()
@@ -55,6 +63,10 @@ const Header = () => {
     const authorization = JSON.parse(localStorage.getItem('auth') as string)
     const favoritesFromLS = JSON.parse(
       localStorage.getItem('favorites') as string
+    )
+
+    const comparsionFromLS = JSON.parse(
+      localStorage.getItem('comparison') as string
     )
 
     if (lang) {
@@ -92,6 +104,14 @@ const Header = () => {
         setFavoritesFromLs(favoritesFromLS)
       }
     }
+
+    if (comparsionFromLS && Array.isArray(comparsionFromLS)) {
+      if (!comparsionFromLS.length) {
+        setShouldShowEmptyComparison(true)
+      } else {
+        setComparisonFromLs(comparsionFromLS)
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -100,6 +120,10 @@ const Header = () => {
       const authorization = JSON.parse(localStorage.getItem('auth') as string)
       const favoritesFromLS = JSON.parse(
         localStorage.getItem('favorites') as string
+      )
+
+      const comparsionFromLS = JSON.parse(
+        localStorage.getItem('comparison') as string
       )
 
       if (cartFromLs && Array.isArray(cartFromLs)) {
@@ -113,6 +137,13 @@ const Header = () => {
         addProductsFromLSToFavorites({
           jwt: authorization.accessToken,
           favoriteItems: favoritesFromLS,
+        })
+      }
+
+      if (comparsionFromLS && Array.isArray(comparsionFromLS)) {
+        addProductsFromLSToComparsion({
+          jwt: authorization.accessToken,
+          comparisonItems: comparsionFromLS,
         })
       }
     }
@@ -138,7 +169,6 @@ const Header = () => {
               onClick={handleOpenSearchModal}
             />
           </li>
-
           <li className='header__links__item'>
             <Link
               href={'/favorites'}
@@ -149,14 +179,16 @@ const Header = () => {
               )}
             </Link>
           </li>
-
           <li className='header__links__item'>
             <Link
               href={'/comparsion'}
               className='header__links__item__btn header__links__item__btn--compare'
-            />
+            >
+              {!!currentComparisonByAuth.length && (
+                <span className='not-empty' />
+              )}
+            </Link>
           </li>
-
           <li className='header__links__item'>
             <CartPopup />
           </li>

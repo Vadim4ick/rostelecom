@@ -20,8 +20,8 @@ import { motion } from 'framer-motion'
 import cartSkeletonStyles from '@/styles/cart-skeleton/index.module.scss'
 import styles from '@/styles/favorites/index.module.scss'
 import { useUnit } from 'effector-react'
-import { loginCheckFx } from '@/api/auth'
 import { FavoritesList } from '@/components/modules/FavoritesPage/FavoritesList'
+import { loginCheckFx } from '@/context/user'
 
 const FavoritesPage = () => {
   const { getDefaultTextGenerator, getTextGenerator } =

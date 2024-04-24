@@ -1,19 +1,32 @@
 /* eslint-disable indent */
-import { loginCheckFx, refreshTokenFx } from '@/api/auth'
 import { addProducToCartFx, deleteCartItemFx, getCartItemFx } from '@/api/cart'
+
 import { JWTError } from '@/const/jwt'
+import { refreshTokenFx } from '@/context/auth'
 import { addProductsFromLSToCartFx } from '@/context/cart'
+import {
+  addProductToComparisonFx,
+  addProductsFromLSToComparisonFx,
+  deleteComparisonItemFx,
+  getComparisonItemsFx,
+} from '@/context/comparsion'
 import {
   addProductToFavoriteFx,
   addProductsFromLsToFavoritesFx,
   deleteFavoriteItemFx,
   getFavoriteItemsFx,
 } from '@/context/favorites'
+import { loginCheckFx } from '@/context/user'
 import {
   IAddProductToCartFx,
   IAddProductsFromLSToCartFx,
   IDeleteCartItemsFx,
 } from '@/types/cart'
+import {
+  IAddProductToComparisonFx,
+  IAddProductsFromLSToComparisonFx,
+  IDeleteComparisonItemsFx,
+} from '@/types/comparison'
 import { IAddProductsFromLSToFavoriteFx } from '@/types/favorites'
 
 const handleJWTError = async (
@@ -38,6 +51,20 @@ const handleJWTError = async (
         case 'addProducToCartFx':
           return await addProducToCartFx({
             ...(payload as IAddProductToCartFx),
+            jwt: newTokens.accessTokens,
+          })
+        case 'addProductToComparisonFx':
+          return await addProductToComparisonFx({
+            ...(payload as IAddProductToComparisonFx),
+            jwt: newTokens.accessTokens,
+          })
+        case 'getComparisonItemsFx':
+          return await getComparisonItemsFx({
+            jwt: newTokens.accessTokens,
+          })
+        case 'addProductsFromLSToComparisonFx':
+          return await addProductsFromLSToComparisonFx({
+            ...(payload as IAddProductsFromLSToComparisonFx),
             jwt: newTokens.accessTokens,
           })
         case 'addProductsFromLSToCartFx':
@@ -67,6 +94,11 @@ const handleJWTError = async (
         case 'deleteFavoriteItemFx':
           return await deleteFavoriteItemFx({
             ...(payload as IDeleteCartItemsFx),
+            jwt: newTokens.accessTokens,
+          })
+        case 'deleteComparisonItemFx':
+          return await deleteComparisonItemFx({
+            ...(payload as IDeleteComparisonItemsFx),
             jwt: newTokens.accessTokens,
           })
 

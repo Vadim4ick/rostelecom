@@ -16,6 +16,8 @@ import { AddToCartBtn } from '../ProductsListItem/AddToCartBtn'
 import Link from 'next/link'
 import ProductItemActionBtn from '@/components/elements/ProductItemActionBtn/ProductItemActionBtn'
 import { ICartItem } from '@/types/cart'
+import { useComparisonAction } from '@/hooks/useComparisonAction'
+import { useFavoritesAction } from '@/hooks/useFavoritesAction'
 
 const QuickViewModal = () => {
   const { lang, translations } = useLang()
@@ -36,6 +38,18 @@ const QuickViewModal = () => {
 
   const addToCart = () => handleAddToCart(count)
 
+  const {
+    addToComparisonSpinner,
+    handleAddToComparison,
+    isProductInComparison,
+  } = useComparisonAction(product)
+
+  const {
+    addToFavoritesSpinner,
+    handleAddProductToFavorites,
+    isProductInFavorites,
+  } = useFavoritesAction(product)
+
   const images = useProductImages(product)
 
   const handleCloseModal = () => {
@@ -53,14 +67,30 @@ const QuickViewModal = () => {
       <div className={styles.modal__actions}>
         <ProductItemActionBtn
           text={translations[lang].product.add_to_favorites}
-          iconClass={'actions__btn_favorite'}
+          iconClass={`${
+            addToFavoritesSpinner
+              ? 'actions__btn_spinner'
+              : isProductInFavorites
+                ? 'actions__btn_favorite_checked'
+                : 'actions__btn_favorite'
+          }`}
           withTooltip={false}
+          callback={handleAddProductToFavorites}
+          spinner={addToFavoritesSpinner}
         />
 
         <ProductItemActionBtn
           text={translations[lang].product.add_to_comparison}
-          iconClass={'actions__btn_comparison'}
+          iconClass={`${
+            addToComparisonSpinner
+              ? 'actions__btn_spinner'
+              : isProductInComparison
+                ? 'actions__btn_comparison_checked'
+                : 'actions__btn_comparison'
+          }`}
           withTooltip={false}
+          callback={handleAddToComparison}
+          spinner={addToComparisonSpinner}
         />
       </div>
 

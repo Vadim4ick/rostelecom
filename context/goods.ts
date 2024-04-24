@@ -1,11 +1,52 @@
 'use client'
 
-import { loadOneProductFx } from '@/api/goods'
+import { $api } from '@/api/api'
+
 import { getBestsellerProductFx, getNewProductFx } from '@/api/main-page'
+import { handleShowSizeTable } from '@/lib/utils/common'
 import { IProduct } from '@/types/common'
 import { ILoadOneProductFx } from '@/types/goods'
-import { Effect, createDomain, createEvent, sample } from 'effector'
+import {
+  Effect,
+  createDomain,
+  createEffect,
+  createEvent,
+  sample,
+} from 'effector'
 import { Gate, createGate } from 'effector-react'
+import toast from 'react-hot-toast'
+
+export const loadOneProductFx = createEffect(
+  async ({
+    category,
+    productId,
+    withShowingSizeTable,
+    setSpinner,
+  }: ILoadOneProductFx) => {
+    try {
+      setSpinner(true)
+
+      const { data } = await $api.post('/api/goods/one', {
+        category,
+        productId,
+      })
+
+      if (withShowingSizeTable) {
+        handleShowSizeTable(data.productItem)
+      }
+
+      if (data.message === 'Wrong product id') {
+        return { productItem: { errorMessage: 'Wrong product id' } }
+      }
+
+      return data
+    } catch (error) {
+      toast.error((error as Error).message)
+    } finally {
+      setSpinner(false)
+    }
+  }
+)
 
 export const setCurrentProduct = createEvent<IProduct>()
 export const loadOneProduct = createEvent<ILoadOneProductFx>()
@@ -44,5 +85,7 @@ export const $currentProduct = goods
 
 sample({
   clock: loadOneProduct,
-  to: loadOneProductFx,
+  source: $currentProduct,
+  fn: (_, data) => data,
+  target: loadOneProductFx,
 })
