@@ -1,11 +1,9 @@
 'use client'
 
 import { useBreadcrumbs } from '@/hooks/useBreadcrumbs'
-import { useCrumbText } from '@/hooks/useCrumbText'
 import { useLang } from '@/hooks/useLang'
-import { usePageTitle } from '@/hooks/usePageTitle'
 import { usePathname } from 'next/navigation'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import Breadcrumbs from '../modules/Breadcrumbs/Breadcrumbs'
 import { HeadingWithCount } from '../elements/HeadingWithCount/HeadingWithCount'
 import { useGoodsByAuth } from '@/hooks/useGoodsByAuth'
@@ -27,16 +25,9 @@ import { isUserAuth } from '@/lib/utils/common'
 import { loginCheckFx } from '@/context/user'
 
 const ComparisonLayout = ({ children }: { children: ReactNode }) => {
-  const breadcrumbs = document.querySelector('.breadcrumbs') as HTMLUListElement
-
   const pathname = usePathname()
-
-  const [dynamicTitle, setDynamicTitle] = useState('')
-  usePageTitle('comparison', dynamicTitle)
-
   const { lang, translations } = useLang()
 
-  const { crumbText } = useCrumbText('comparison')
   const { availableProductLinks, linkSpinner } = useComparisonLinks()
 
   const loginCheckSpinner = useUnit(loginCheckFx.pending)
@@ -47,28 +38,6 @@ const ComparisonLayout = ({ children }: { children: ReactNode }) => {
     useBreadcrumbs('comparison')
 
   const currentComparisonByAuth = useGoodsByAuth($comparsion, $comparisonFromLs)
-
-  useEffect(() => {
-    const lastCrumb = document.querySelector('.last-crumb') as HTMLElement
-
-    if (lastCrumb) {
-      const productTypePathname = pathname.split('/comparsion/')[1]
-
-      if (!productTypePathname) {
-        setDynamicTitle('')
-        lastCrumb.textContent = crumbText
-
-        return
-      }
-
-      const text = (
-        translations[lang].comparison as { [index: string]: string }
-      )[productTypePathname]
-
-      setDynamicTitle(text)
-      lastCrumb.textContent = text
-    }
-  }, [crumbText, lang, pathname, translations, breadcrumbs])
 
   const mainSpinner = isUserAuth()
     ? linkSpinner || loginCheckSpinner

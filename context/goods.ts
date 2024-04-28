@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 'use client'
 
 import { $api } from '@/api/api'
@@ -5,7 +6,11 @@ import { $api } from '@/api/api'
 import { getBestsellerProductFx, getNewProductFx } from '@/api/main-page'
 import { handleShowSizeTable } from '@/lib/utils/common'
 import { IProduct } from '@/types/common'
-import { ILoadOneProductFx } from '@/types/goods'
+import {
+  ILoadOneProductFx,
+  ILoadProductsByFilterFx,
+  IProducts,
+} from '@/types/goods'
 import {
   Effect,
   createDomain,
@@ -48,8 +53,29 @@ export const loadOneProductFx = createEffect(
   }
 )
 
+export const loadProductsByFilterFx = createEffect(
+  async ({
+    isCatalog,
+    category,
+    limit,
+    offset,
+    additionalParam,
+  }: ILoadProductsByFilterFx) => {
+    try {
+      const { data } = await $api.get(
+        `/api/goods/filter?limit=${limit}&offset=${offset}&category=${category}&${additionalParam}${isCatalog ? '&catalog=true' : ''}`
+      )
+
+      return data
+    } catch (error) {
+      toast.error((error as Error).message)
+    }
+  }
+)
+
 export const setCurrentProduct = createEvent<IProduct>()
 export const loadOneProduct = createEvent<ILoadOneProductFx>()
+export const loadProductsByFilter = createEvent<ILoadProductsByFilterFx>()
 
 const goods = createDomain()
 
@@ -83,9 +109,20 @@ export const $currentProduct = goods
   .on(setCurrentProduct, (_, product) => product)
   .on(loadOneProductFx.done, (_, { result }) => result.productItem)
 
+export const $products = goods
+  .createStore<IProducts>({} as IProducts)
+  .on(loadProductsByFilterFx.done, (_, { result }) => result)
+
 sample({
   clock: loadOneProduct,
   source: $currentProduct,
   fn: (_, data) => data,
   target: loadOneProductFx,
+})
+
+sample({
+  clock: loadProductsByFilter,
+  source: $products,
+  fn: (_, data) => data,
+  target: loadProductsByFilterFx,
 })

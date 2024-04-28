@@ -12,6 +12,7 @@ import img3 from '@/public/img/violet-t.png'
 import { SwiperSlide, Swiper } from 'swiper/react'
 import HeroSlide from './HeroSlide'
 import { EffectCoverflow } from 'swiper/modules'
+import productSubTitleStyles from '@/styles/productSubtitle/index.module.scss'
 
 import 'swiper/css'
 import 'swiper/css/effect-coverflow'
@@ -73,7 +74,12 @@ const Hero = () => {
           ))}
         </Swiper>
 
-        <ProductSubtitle />
+        <ProductSubtitle
+          subtitleClassName={productSubTitleStyles.list__item_ad__subtitle}
+          subtitleRectClassName={
+            productSubTitleStyles.list__item_ad__subtitle__rect
+          }
+        />
 
         <h2 className={styles.hero__title}>
           <span

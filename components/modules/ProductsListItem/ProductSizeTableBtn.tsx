@@ -4,12 +4,15 @@ import { ISelectedSizes } from '@/types/common'
 import { useLang } from '@/hooks/useLang'
 import { addOverflowHiddenBody } from '@/lib/utils/common'
 import { setSizeTableSizes } from '@/context/sizeTable'
+import { setIsAddToFavorites } from '@/context/favorites'
 
 const ProductSizeTableBtn = ({ sizes, type, className }: ISelectedSizes) => {
   const { lang, translations } = useLang()
   const showQuickViewModal = useUnit($showQuickViewModal)
 
   const handleShowSizeTable = () => {
+    setIsAddToFavorites(false)
+
     if (!showQuickViewModal) {
       addOverflowHiddenBody()
     }

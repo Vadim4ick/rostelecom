@@ -27,19 +27,14 @@ export const useMenuAnimation = (zIdx: number, popupIsOpen: boolean) => {
 
   useEffect(() => {
     if (popupIsOpen) {
-      return setPopupZIdx(zIdx)
+      setPopupZIdx(zIdx)
+      return
     }
 
-    const timerId = setTimeout(() => {
-      setPopupZIdx('-1')
-    }, 100)
+    const timerId = setTimeout(() => setPopupZIdx('-1'), 1000)
 
     return () => clearTimeout(timerId)
   }, [popupIsOpen, zIdx])
 
-  return {
-    popupZIdx,
-    itemVariants,
-    sideVariants,
-  }
+  return { popupZIdx, itemVariants, sideVariants }
 }
