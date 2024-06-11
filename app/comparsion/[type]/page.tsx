@@ -10,8 +10,6 @@ export default function ComparisonType({
 }: {
   params: { type: string }
 }) {
-  console.log('params', params)
-
   if (!productTypes.includes(params.type)) {
     notFound()
   }

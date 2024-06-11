@@ -10,9 +10,7 @@ const ProductSubtitle = ({
   const descriptionSlicePosition = lang === 'ru' ? 5 : 2
 
   return (
-    <div
-      className={`${styles.product_subtitle__subtitle} ${subtitleClassName}`}
-    >
+    <div className={subtitleClassName}>
       <div
         className={`${styles.product_subtitle__subtitle__rect} ${subtitleRectClassName}`}
       />

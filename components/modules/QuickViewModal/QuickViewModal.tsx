@@ -18,6 +18,7 @@ import ProductItemActionBtn from '@/components/elements/ProductItemActionBtn/Pro
 import { ICartItem } from '@/types/cart'
 import { useComparisonAction } from '@/hooks/useComparisonAction'
 import { useFavoritesAction } from '@/hooks/useFavoritesAction'
+import { setIsAddToFavorites } from '@/context/favorites'
 
 const QuickViewModal = () => {
   const { lang, translations } = useLang()
@@ -36,7 +37,10 @@ const QuickViewModal = () => {
     count,
   } = useCartAction()
 
-  const addToCart = () => handleAddToCart(count)
+  const addToCart = () => {
+    setIsAddToFavorites(false)
+    handleAddToCart(count)
+  }
 
   const {
     addToComparisonSpinner,

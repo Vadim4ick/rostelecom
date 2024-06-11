@@ -81,7 +81,12 @@ const ProductsListItem = ({ item, title }: IProductsListItemProps) => {
             />
 
             <div className={styles.list__item_ad__img}>
-              <Image src={item.images[0]} alt={item.name} fill />
+              <Image
+                src={item.images[0]}
+                alt={item.name}
+                width={224}
+                height={275}
+              />
             </div>
 
             <p className={styles.list__item_ad__title}>
